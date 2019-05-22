@@ -1,0 +1,87 @@
+{% extends "layout.html" %}
+
+{% block content %}
+	<h1>{{ title }}</h1>
+	<div class="row">
+		<div class="col-md-3">
+		</div>
+<!--SORT-->
+		<div class="col-md-9">
+			<h3 class="float-left">Sort by:</h3>
+<!--SORT DATE-->
+			<form method="get" action="">
+				<button type="submit" value="asc" name="date" class="btn btn-primary float-right mr-2">▾</button>
+				<button type="submit" value="desc" name="date" class="btn btn-primary float-right mr-2">▴</button>
+				<button type="submit" value="desc" name="date" class="btn btn-primary float-right mr-2">Date</button>
+			</form>
+<!--SORT UPVOTES-->
+			<form method="get" action="">
+				<button type="submit" value="asc" name="upvote" class="btn btn-success float-right mr-2">▾</button>
+				<button type="submit" value="desc" name="upvote" class="btn btn-success float-right mr-2">▴</button>
+				<button type="submit" value="desc" name="upvote" class="btn btn-success float-right mr-2">Upvote</button>
+			</form>
+<!--SORT COMMENTS-->
+			<form method="get" action="">
+				<button type="submit" value="asc" name="comment" class="btn btn-info float-right mr-2">▾</button>
+				<button type="submit" value="desc" name="comment" class="btn btn-info float-right mr-2">▴</button>
+				<button type="submit" value="desc" name="comment" class="btn btn-info float-right mr-2">Comment</button>
+			</form>
+		</div>
+	</div>
+
+<!--POSTS-->
+	<hr>
+	{% if posts %}
+		{% for post in posts %}
+			<div class="card mb-3">
+<!--DISPLAY IMAGE-->
+				<a href="{{ url_for('static', filename='images/' + post.image) }}" target="_blank"><img class="card-img-top" src="{{ url_for('static', filename='images/' + post.image) }}" alt="Card image cap" width="10%" height="300" background-repeat="no-repeat" background-position="50%50%"></a>
+<!--USER DP-->
+				<div class="card-body">
+					<div class="row">
+						<div class="col-md-1">
+							<img class="rounded-circle article-image" src="{{ url_for('static', filename='images/' + post.profile_picture) }}" height="30" width="30">
+						</div>
+<!--USER MAIL-->
+						<div class="col-md-11">
+							<small>{{ post.email }}</small>
+						</div>
+					</div>
+<!--POST CONTENT-->
+					<hr>
+					<h2><a class="article-title" href="{{ url_for('post', post_id= post.post_id) }}">{{ post.title }}</a></h2>
+					<p class="card-text">{{ post.body }}</p>
+					<br>
+					<hr>
+<!--UPVOTE, DOWNVOTE, COMMENT-->
+					<p class="card-text"><small class="text-muted">Date posted {{ post.date_created[0:19] }}</small></p>
+
+					<div class="btn-toolbar">
+						<form method="post" action="{{ url_for('upvote', post_id=post.post_id) }}">
+							{{ form.hidden_tag() }}
+							<div class="mr-2">
+								<button type="submit" class="btn btn-success btn-block">▴ {{ post.upvote_count }}</button>
+							</div>
+						</form>
+
+						<form method="post" action="{{ url_for('downvote', post_id=post.post_id) }}">
+							{{ form.hidden_tag() }}
+							<div class="mr-2">
+								<button type="submit" class="btn btn-danger btn-block">▾ {{ post.downvote_count }}</button>
+							</div>
+						</form>
+
+						<div class="mr-2">
+							<a href="{{ url_for('post', post_id= post.post_id) }}"><button type="button" class="btn btn-info btn-block">Comments {{ post.comments_count }}</button></a>
+						</div>
+
+					</div>
+				</div>
+			</div>
+		{% endfor %}
+	{% else %}
+		<div class="alert alert-dark" role="alert">
+			NO POSTS AVAILABLE
+		</div>
+	{% endif %}
+{% endblock content %}

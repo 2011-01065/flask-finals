@@ -1,0 +1,73 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<!--POST TITLE AND IMAGE-->
+	<h2 class="article-title">{{ post.title }}</h2>
+	<hr>
+	<a href="{{ url_for('static', filename='images/' + post.image) }}" target="_blank"><img class="card-img-top" src="{{ url_for('static', filename='images/' + post.image) }}" alt="Card image cap" width="100%" height="300"></a>
+	<br>
+	<br>
+
+<!--UNDER IMAGE-->
+		<img class="rounded-circle article-image" src="{{ url_for('static', filename='images/' + post.author.profile_picture) }}" height="50" width="50">
+		<br>
+		<br>
+		<div class="media-body">
+			<div class="article-metadata">
+				<a class="ml-3">{{ post.author.email }}</a>
+				<small class="text-muted ml-3">{{ post.date_created.strftime('%Y-%m-%d') }}</small>
+			</div>
+			<hr>
+			<article class="media content-section">
+			<p class="article-content">{{ post.body }}</p>
+			</div>
+			</article>
+
+<!--UPVOTE, DOWNVOTE, COMMENT COUNT-->
+	<hr>
+	<div class="btn-toolbar">
+		<form method="post" action="{{ url_for('upvote', post_id=post.post_id) }}">
+			{{ comment_form.hidden_tag() }}
+			<div class="mr-2">
+				<button type="submit" class="btn btn-success btn-block">▴ {{ upvote_count }}</button>
+			</div>
+		</form>
+		<form method="post" action="{{ url_for('downvote', post_id=post.post_id) }}">
+			{{ comment_form.hidden_tag() }}
+			<div class="mr-2">
+				<button type="submit" class="btn btn-danger btn-block">▾ {{ downvote_count }}</button>
+			</div>
+		</form>
+		<div class="mr-2">
+			<button type="button" class="btn btn-info btn-block">Comments {{ comments_count }}</button>
+		</div>
+	</div>
+
+<!--COMMENT SECTION-->
+	{% for comment in comments %}
+		{% if comment.comment %}
+		<hr>
+			<article class="media content-section">
+				<img class="rounded-circle article-image" src="{{ url_for('static', filename='images/' + comment.author.profile_picture) }}" height="40" width="40">
+				<div class="media-body">
+					<small class="text-muted ml-4">{{ comment.author.email }} - {{ comment.date_created.strftime('%Y-%m-%d') }}</small>
+					<br>
+					<p class="ml-4">{{ comment.comment }}</p>
+				</div>
+			</article>
+		<hr>
+		{% endif %}
+	{% endfor %}
+
+<!--SUBMIT COMMENT-->
+	<br>
+	<form method="post" action="{{ url_for('comment', post_id=post.post_id) }}">
+		{{ comment_form.hidden_tag() }}
+		{{ comment_form.comment(placeholder="Write a comment...", class="form-control form-control-lg") }}
+		<br>
+		{{ comment_form.submit(class="btn btn-primary btn-block") }}
+	</form>
+
+	<BR>
+	<BR>
+{% endblock content %}
